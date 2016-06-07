@@ -9,6 +9,7 @@ from std_msgs.msg import String, Bool, Float32
 from read_config import read_config
 from astar import runAStar
 from mdp import runMDP
+from qlearing import runQLearning
 from CSE190_final_project.msg import AStarPath, PolicyList
 import image_util
 
@@ -76,6 +77,11 @@ class Robot():
         #print mdp_policy
         #sself.policy_pub.publish(mdp_policy)
 
+        
+        #Qlearning
+        epsilonVal = .2
+        iterations = 100
+        qlearning_policy = runQLearning(epsilonVal, iterations);
 
         rospy.sleep(1)
         self.sim_complete.publish(True)
