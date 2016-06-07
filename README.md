@@ -1,4 +1,5 @@
-#Path Planning Algorithms
+#CSE 190 Final Project
+Initially modified from our implementation of PA3
 
 In this assignment you need to implement:
 
