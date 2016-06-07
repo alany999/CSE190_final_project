@@ -68,7 +68,7 @@ def computeValueFromQValues(curr_position):
     else:
         # Compute max Q-Value
         for action in legalActions:
-            qValue = self.getQValue(curr_position, action)
+            qValue = getQValue(curr_position, action)
             if qValue > max:
                 max = qValue
 
@@ -100,7 +100,7 @@ def computeActionFromQValues(curr_position):
     # Compute max Q-Value and best action
     else:
         for action in legalActions:
-            qValue = self.getQValue(state, action)
+            qValue = getQValue(state, action)
             if qValue > max:
                 max = qValue
                 bestAction = action
@@ -147,13 +147,13 @@ def getAction(curr_position, epsilon):
 
 def getQValue(curr_position, action):
         """
-          Return the reward? TODO: Current not used
+          Return the reward? TODO: Validate moves and return 0 if goal state
         """
         qValue = 0.0
-        qValue = qValue
+        qValue = qValues{(curr_position, action)}
         return qValue    
 
-def runQLearning(epsilonVal, iterations):
+def runQLearning(epsilonVal, alpha, iterations):
     config = read_config()
     height = config['map_size'][0]
     width = config['map_size'][1]
@@ -181,7 +181,6 @@ def runQLearning(epsilonVal, iterations):
     global epsilon
     epsilon = epsilonVal
 
-
     # Intialize policy map and reward map
     policy = init_policy(wall_list, pit_list, goal, width, height)
     reward = init_reward(wall_list, pit_list, goal, reward_pit, reward_goal, reward_wall, width, height)
@@ -196,8 +195,8 @@ def runQLearning(epsilonVal, iterations):
         qValue_prime = float(qValue_prime) * float(discount_factor)
         qValue = qValues{(curr_position, action_prime)}
         state_reward = reward[action[0]][action[1]]
-        updatedQValue = qValue + self.alpha * (state_reward + qValue_prime - qValue)
+        updatedQValue = qValue + alpha * (state_reward + qValue_prime - qValue)
 
         # Put the update Q-Value to the Q-Values list
         #self.qValues.remove((state, action, qValue))
-        self.qValues[(state,action)] = updatedQValue
+        qValues[(state,action)] = updatedQValue
