@@ -117,7 +117,7 @@ def computeActionFromQValues(curr_position):
         return None
 
 
-def getAction(curr_position):
+def getAction(curr_position, epsilon):
     """
       Compute the action to take in the current state.  With
       probability self.epsilon, we should take a random action and
@@ -145,9 +145,13 @@ def getAction(curr_position):
     else:
         return self.computeActionFromQValues(curr_position)
 
-
-def getMoves(move, p_forward, p_backward, p_left, p_right):
-    
+def getQValue(curr_position, action):
+        """
+          Return the reward? TODO: Current not used
+        """
+        qValue = 0.0
+        qValue = qValue
+        return qValue    
 
 def runQLearning(epsilonVal, iterations):
     config = read_config()
@@ -184,7 +188,16 @@ def runQLearning(epsilonVal, iterations):
 
 
     for iteration in range(iterations)
-        action = getAction(curr_position)
+        action = getAction(curr_position, epsilon)
         new_position = (curr_position[0]+action[0], curr_position[1]+action[1])
         #qValue = 
+        action_prime = computeActionFromQValues(new_position)
+        qValue_prime = computeValueFromQValue(curr_position, action_prime)
+        qValue_prime = float(qValue_prime) * float(discount_factor)
+        qValue = qValues{(curr_position, action_prime)}
+        state_reward = reward[action[0]][action[1]]
+        updatedQValue = qValue + self.alpha * (state_reward + qValue_prime - qValue)
 
+        # Put the update Q-Value to the Q-Values list
+        #self.qValues.remove((state, action, qValue))
+        self.qValues[(state,action)] = updatedQValue
