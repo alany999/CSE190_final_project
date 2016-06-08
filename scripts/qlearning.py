@@ -31,25 +31,222 @@ epsilon = 0.0
 
 #def init_qValues
 
-def validMove(curr_position, move, rows, cols, walls, pits):
+def ValidLocation(new_position):
 
     config = read_config()
     goal = config['goal']
+    rows = config['map_size'][0]
+    cols = config['map_size'][1]
+    walls = config['walls']
 
-    if curr_position == goal:
+    if new_position[0] < 0 or new_position[0] > rows-1 or new_position[1] < 0 or new_position[1] > cols-1:
         return False
 
-    new_position = [curr_position[0]+move[0], curr_position[1]+move[1]]
+    #Check if in wall or pit
+    if list(new_position) in walls:
+        return False
+
+    return True
+
+def validMove(curr_position, move):
+
+    config = read_config()
+    goal = config['goal']
+    rows = config['map_size'][0]
+    cols = config['map_size'][1]
+    walls = config['walls']
+
+    if cmp(list(curr_position), goal) == 0:
+        return False
+
+    new_position = getLocationAfterMove(curr_position, move)
 
     #Check if out of bounds
     if new_position[0] < 0 or new_position[0] > rows-1 or new_position[1] < 0 or new_position[1] > cols-1:
         return False
 
     #Check if in wall or pit
-    if new_position == walls:
+    if list(new_position) in walls:
         return False
 
     return True
+
+def getLocationAfterMove(curr_position, move):
+    if (move == 0):
+
+        # move up
+        return (curr_position[0]-1, curr_position[1]+0)
+
+    # move down
+    elif (move == 1):
+
+        # move down
+        return (curr_position[0]+1, curr_position[1]+0)
+
+    # move right
+    elif (move == 2):
+
+        # move right
+        return (curr_position[0], curr_position[1]+1)
+
+    # move left
+    elif (move == 3):
+
+        # move left
+        return (curr_position[0], curr_position[1]-1)
+
+    # unrecognized move
+    else:
+        print('Illegal Move')
+
+
+def getLocationAfterMoveWithProb(curr_position, move, p_forward, p_backward, p_left, p_right):
+    rng = random.random()
+
+    if (move == 0):
+
+        # move up
+        if (rng <= p_forward):
+            new_position = curr_position[0]-1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move right
+        elif (rng <= p_right + p_forward):
+            new_position = curr_position[0], curr_position[1]+1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move left
+        elif (rng <= p_left + p_right + p_forward):
+            new_position = curr_position[0], curr_position[1]-1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move down
+        else:
+            new_position = curr_position[0]+1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+    # move down
+    elif (move == 1):
+
+        # move down
+        if (rng <= p_forward):
+            new_position = curr_position[0]+1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move right
+        elif (rng <= p_left + p_forward):
+            new_position = curr_position[0], curr_position[1]+1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move left
+        elif (rng <= p_left + p_right + p_forward):
+            new_position = curr_position[0], curr_position[1]-1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move down
+        else:
+            new_position = curr_position[0]-1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+
+    # move right
+    elif (move == 2):
+
+        # move right
+        if (rng <= p_forward):
+            new_position = curr_position[0], curr_position[1]+1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move up
+        elif (rng <= p_left + p_forward):
+            new_position = curr_position[0]-1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move down
+        elif (rng <= p_left + p_right + p_forward):
+            new_position = curr_position[0]+1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move left
+        else:
+            new_position = curr_position[0], curr_position[1]-1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+    # move left
+    elif (move == 3):
+
+        # move left
+        if (rng <= p_forward):
+            new_position = curr_position[0], curr_position[1]-1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move down
+        elif (rng <= p_left + p_forward):
+            new_position = curr_position[0]+1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move up
+        elif (rng <= p_left + p_right + p_forward):
+            new_position = curr_position[0]-1, curr_position[1]
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+        # move right
+        else:
+            new_position = curr_position[0], curr_position[1]+1
+            if (ValidLocation(new_position)):
+                return new_position
+            else:
+                return curr_position
+
+    # unrecognized move
+    else:
+        print('Illegal Move')
+        return curr_position
 
 
 
@@ -67,8 +264,8 @@ def computeValueFromQValues(curr_position):
     legalActions = []
 
     for move in move_list:
-        if validMove(curr_position, tuple(move), rows, cols, walls, pits):
-            legalActions.append(tuple(move))
+        if validMove(curr_position, move):
+            legalActions.append(move)
     if len(legalActions) == 0:
         return 0.0
     else:
@@ -97,15 +294,15 @@ def computeActionFromQValues(curr_position):
     walls = config['walls']
     pits = config['pits']
     # Default action is None
-    bestAction = None
+    bestAction = 4
     actionList = []
     legalActions = []
 
 
 
     for move in move_list:
-        if validMove(curr_position, tuple(move), rows, cols, walls, pits):
-            legalActions.append(tuple(move))
+        if validMove(curr_position, move):
+            legalActions.append(move)
 
 
     if len(legalActions) == 0:
@@ -113,14 +310,14 @@ def computeActionFromQValues(curr_position):
     # Compute max Q-Value and best action
     else:
         for action in legalActions:
-            qValue = getQValue(curr_position, tuple(action))
+            qValue = getQValue(curr_position, action)
             if qValue > max_value:
                 max_value = qValue
-                bestAction = tuple(action)
+                bestAction = action
                 actionList = []
                 actionList.append(action)
             elif qValue == max_value:
-                actionList.append(tuple(action));
+                actionList.append(action);
 
 
     # Return best Action
@@ -166,7 +363,7 @@ def getQValue(curr_position, action):
 
     # print action
     # print curr_position
-    qValue = qValues[tuple(curr_position), tuple(action)]
+    qValue = qValues[tuple(curr_position), action]
     # TODO: check if qvalue is null?
 
     return qValue
@@ -180,8 +377,7 @@ def getMaxQValue(curr_position):
     max_value = float("-inf")
 
     for move in move_list:
-        print tuple(move)
-        qValue = qValues[(tuple(curr_position), tuple(move))]
+        qValue = qValues[(tuple(curr_position), move)]
         if (qValue > max_value):
             max_value = qValue
     return qValue
@@ -225,8 +421,7 @@ def runQLearning(epsilonVal, alpha):
         for col in range(0, width):
             curr_position = (row,col)
             for move in move_list:
-                key = (tuple(curr_position), tuple(move))
-                print key
+                key = (tuple(curr_position), move)
                 if curr_position in pit_list:
                     qValues[key] = reward_pit
                 elif cmp(curr_position, goal) == 0:
@@ -244,7 +439,7 @@ def runQLearning(epsilonVal, alpha):
         action = computeActionFromQValues(curr_position)
 
         # Get position after the move
-        new_position = (curr_position[0]+action[0], curr_position[1]+action[1])
+        new_position = getLocationAfterMoveWithProb(curr_position, action, p_forward, p_backward, p_left, p_right)
 
         # update q-value
         # u_i = (reward_step + discount_factor * (max Q value from new position) )
@@ -263,6 +458,14 @@ def runQLearning(epsilonVal, alpha):
 
         # Put the update Q-Value to the Q-Values list
         #self.qValues.remove((state, action, qValue))
-        qValues[(tuple(curr_position),tuple(action))] = new_qValue
+        qValues[(tuple(curr_position),action)] = new_qValue
         curr_position = new_position
+
+        # If reached an terminal position, return to start
+        if list(curr_position) in pit_list:
+            curr_position = start
+        elif cmp(list(curr_position), goal) == 0:
+            curr_position = start
+
+
     return qValues
