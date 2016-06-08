@@ -42,7 +42,7 @@ def validMove(curr_position, move, rows, cols, walls, pits):
     new_position = [curr_position[0]+move[0], curr_position[1]+move[1]]
 
     #Check if out of bounds
-    if new_position[0] < 0 or new_position[0] > rows or new_position[1] < 0 or new_position[1] > cols:
+    if new_position[0] < 0 or new_position[0] > rows-1 or new_position[1] < 0 or new_position[1] > cols-1:
         return False
 
     #Check if in wall or pit
@@ -226,6 +226,7 @@ def runQLearning(epsilonVal, alpha):
             curr_position = (row,col)
             for move in move_list:
                 key = (tuple(curr_position), tuple(move))
+                print key
                 if curr_position in pit_list:
                     qValues[key] = reward_pit
                 elif cmp(curr_position, goal) == 0:
@@ -262,6 +263,6 @@ def runQLearning(epsilonVal, alpha):
 
         # Put the update Q-Value to the Q-Values list
         #self.qValues.remove((state, action, qValue))
-        qValues[(curr_position,tuple(action))] = new_qValue
+        qValues[(tuple(curr_position),tuple(action))] = new_qValue
         curr_position = new_position
     return qValues
