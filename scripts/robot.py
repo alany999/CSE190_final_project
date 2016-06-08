@@ -80,7 +80,8 @@ class Robot():
         #Qlearning
         epsilonVal = .2
         iterations = 100
-        qlearning_policy = runQLearning(epsilonVal, iterations);
+        alpha = 0.5
+        qlearning_policy = runQLearning(epsilonVal, alpha);
         print qlearning_policy
 
 
