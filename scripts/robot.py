@@ -79,10 +79,18 @@ class Robot():
 
         #Qlearning
         epsilonVal = .2
-        iterations = 100
+        iterations = 200
         alpha = 0.5
         qlearning_policy = runQLearning(epsilonVal, alpha);
-        print qlearning_policy
+        
+        for row in range(0, rows):
+            for col in range (0, cols):
+                for move in range (0, 3):
+                    tmp_position = (row, col)
+                    qVal = qlearning_policy[(tuple(tmp_position), move)]
+                    print "[(" + str(row) + "," + str(col) + "), " + str(move) + "]: " + str(qVal)
+
+        #print qlearning_policy
 
 
         rospy.sleep(1)

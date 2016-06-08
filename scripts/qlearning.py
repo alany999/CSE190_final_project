@@ -275,10 +275,10 @@ def computeValueFromQValues(curr_position):
         for action in legalActions:
             qValue = getQValue(curr_position, action)
             if qValue > max_value:
-                max_value = qValue
+                max_value = qValu_valuee
 
     # Return max Q-Value
-    return max
+    return max_value
 
 
 def computeActionFromQValues(curr_position):
@@ -316,7 +316,6 @@ def computeActionFromQValues(curr_position):
             if qValue > max_value:
                 max_value = qValue
                 bestAction = action
-                actionList = []
                 actionList.append(action)
             elif qValue == max_value:
                 actionList.append(action);
@@ -382,7 +381,7 @@ def getMaxQValue(curr_position):
         qValue = qValues[(tuple(curr_position), move)]
         if (qValue > max_value):
             max_value = qValue
-    return qValue
+    return max_value
 
 
 def runQLearning(epsilonVal, alpha):
@@ -446,6 +445,7 @@ def runQLearning(epsilonVal, alpha):
 
         # Get position after the move
         new_position = getLocationAfterMoveWithProb(curr_position, action, p_forward, p_backward, p_left, p_right)
+        #new_position = getLocationAfterMove(curr_position, action)
 
         # update q-value
         # u_i = (reward_step + discount_factor * (max Q value from new position) )
