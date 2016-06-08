@@ -72,6 +72,7 @@ def validMove(curr_position, move):
     return True
 
 def getLocationAfterMove(curr_position, move):
+    #move up
     if (move == 0):
 
         # move up
@@ -103,6 +104,7 @@ def getLocationAfterMove(curr_position, move):
 def getLocationAfterMoveWithProb(curr_position, move, p_forward, p_backward, p_left, p_right):
     rng = random.random()
 
+    # move up
     if (move == 0):
 
         # move up
@@ -419,19 +421,23 @@ def runQLearning(epsilonVal, alpha):
     # Initialize q-value dictionary
     for row in range(0, height):
         for col in range(0, width):
-            curr_position = (row,col)
+            curr_position = [row,col]
             for move in move_list:
                 key = (tuple(curr_position), move)
                 if curr_position in pit_list:
+                    print "pit"
                     qValues[key] = reward_pit
                 elif cmp(curr_position, goal) == 0:
+                    print "goal"
                     qValues[key] = reward_goal
                 elif curr_position in wall_list:
+                    print "wall"
                     qValues[key] = reward_wall
                 else:
         		    qValues[key] = 0.0
 
-    curr_position = start
+
+    curr_position = tuple(start)
 
     for iteration in range(0, max_iterations):
 
