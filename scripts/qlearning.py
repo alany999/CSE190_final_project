@@ -249,7 +249,7 @@ def runQLearning(epsilonVal, alpha):
         # u_i = (reward_step + discount_factor * (max Q value from new position) )
         # Q_new(S,a) = (1-alpha)Q_old(s,a)+ alpha * temp
         u_i = reward_step + discount_factor * (getMaxQValue((new_position)))
-        new_qValue = (1-alpha) * getQValue(curr_position) + alpha * u_i
+        new_qValue = (1-alpha) * getQValue(curr_position,action) + alpha * u_i
 
 
         # calculate
@@ -262,6 +262,6 @@ def runQLearning(epsilonVal, alpha):
 
         # Put the update Q-Value to the Q-Values list
         #self.qValues.remove((state, action, qValue))
-        qValues[(state,action)] = new_QValue
+        qValues[(curr_position,tuple(action))] = new_qValue
         curr_position = new_position
     return qValues
