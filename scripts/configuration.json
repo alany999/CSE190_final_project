@@ -33,7 +33,7 @@
   
   "danger_zone_damage_chance": 0.75,
 
-  "discount_factor": 0.8,
+  "discount_factor": 0.9,
 
   "prob_move_forward": 0.8,
   "prob_move_backward": 0.0,
