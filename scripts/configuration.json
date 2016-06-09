@@ -21,7 +21,7 @@
     [2, 2]
   ],
 
-  "max_iterations": 200,
+  "max_iterations": 100,
   "threshold_difference": 0.00001,
 
 
@@ -30,15 +30,15 @@
   "reward_for_reaching_goal": 10.0,
   "reward_for_falling_in_pit": -10.0,
   "reward_for_danger_zone": -2.0,
-  
+
   "danger_zone_damage_chance": 0.75,
 
   "discount_factor": 0.9,
 
-  "prob_move_forward": 0.8,
+  "prob_move_forward": 1.0,
   "prob_move_backward": 0.0,
-  "prob_move_left": 0.1,
-  "prob_move_right": 0.1,
+  "prob_move_left": 0.00,
+  "prob_move_right": 0.00,
 
   "generate_video": 1
 }

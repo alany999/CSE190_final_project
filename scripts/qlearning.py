@@ -7,30 +7,6 @@ import random
 qValues = {}
 epsilon = 0.0
 
-#def init_policy(wall_list, pit_list, goal, width, height):
-
-# def init_reward(wall_list, pit_list, goal_loc, pit, goal, wall, width, height):
-#     for y in range(0,height):
-#         temp = []
-#         for x in range(0,width):
-#             temp_list = [y,x]
-#             if [y,x] in pit_list:
-#                 temp.append(pit)
-#             elif cmp(temp_list, goal_loc) == 0:
-#                 temp.append(goal)
-#             elif [y,x] in wall_list:
-#                 temp.append('WALL')
-#             else:
-#                     temp.append(0.0)
-#
-#         if (y == 0):
-#             reward = [temp]
-#         else:
-#             reward.append(temp)
-#     return reward
-
-#def init_qValues
-
 def ValidLocation(new_position):
 
     config = read_config()
@@ -314,7 +290,7 @@ def computeActionFromQValues(curr_position):
     walls = config['walls']
     pits = config['pits']
     # Default action is None
-    bestAction = 4
+    bestAction = 0
     actionList = []
     legalActions = []
 
@@ -345,36 +321,6 @@ def computeActionFromQValues(curr_position):
     else:
         return None
 
-
-# def getAction(curr_position, epsilon):
-#     """
-#       Compute the action to take in the current state.  With
-#       probability self.epsilon, we should take a random action and
-#       take the best policy action otherwise.  Note that if there are
-#       no legal actions, which is the case at the terminal state, you
-#       should choose None as the action.
-#
-#       HINT: You might want to use util.flipCoin(prob)
-#       HINT: To pick randomly from a list, use random.choice(list)
-#     """
-#     # Pick Action
-#     legalActions = []
-#     for move in moveList:
-#         if validMove(curr_position, move, rows, cols, walls, pits):
-#             legalActions.append(move)
-#     action = None
-#     # If legal action doesnt exist, return None
-#     if len(legalActions) == 0:
-#         return action
-#
-#     # If random value between 0 and 1.0 is less than epsilon, return random action
-#     elif random.random() < epsilon):
-#         return random.choice(legalActions)
-#     # Else, return best action
-#     else:
-#         return self.computeActionFromQValues(curr_position)
-
-
 def getQValue(curr_position, action):
     """
       Return the reward? TODO: Validate moves and return 0 if goal state
@@ -382,7 +328,7 @@ def getQValue(curr_position, action):
 
     # print action
     # print curr_position
-    qValue = qValues[tuple(curr_position), action]
+    qValue = qValues[(tuple(curr_position), action)]
     # TODO: check if qvalue is null?
 
     return qValue
@@ -445,20 +391,16 @@ def runQLearning(epsilonVal, alpha):
             curr_position = [row,col]
             for move in move_list:
                 key = (tuple(curr_position), move)
-                '''
-                if curr_position in pit_list:
-                    print "pit"
+                if list(curr_position) in pit_list:
                     qValues[key] = reward_pit
-                elif cmp(curr_position, goal) == 0:
-                    print "goal"
+                elif cmp(list(curr_position), goal) == 0:
                     qValues[key] = reward_goal
-                elif curr_position in wall_list:
-                    print "wall"
+                elif list(curr_position) in wall_list:
                     qValues[key] = reward_wall
                 else:
         	    qValues[key] = 0.0
-                '''
-                qValues[key] = 0.0
+
+                #qValues[key] = 0.0
                 '''
                 #Incorrect implementation of danger_zone
                 elif curr_position in danger_zone_list:
@@ -467,7 +409,7 @@ def runQLearning(epsilonVal, alpha):
                 '''
 
     curr_position = tuple(start)
-    
+
     robot_health = 100;
 
     for iteration in range(0, max_iterations):
@@ -479,24 +421,25 @@ def runQLearning(epsilonVal, alpha):
         new_position = getLocationAfterMoveWithProb(curr_position, action, p_forward, p_backward, p_left, p_right)
         #new_position = getLocationAfterMove(curr_position, action)
 
-        # update q-value
+
+        # Calculate the new q-value
         # u_i = (reward_step + discount_factor * (max Q value from new position) )
         # Q_new(S,a) = (1-alpha)Q_old(s,a)+ alpha * temp
-       
+
         additional_reward = 0.0
-        if list(new_position) in wall_list:
-            additional_reward += reward_wall
-        elif list(new_position) in danger_zone_list:
+        # if list(new_position) in wall_list:
+        #     additional_reward += reward_wall
+        if list(new_position) in danger_zone_list:
             additional_reward += reward_danger_zone
             #print "in danger"
             if random.random() < danger_zone_damage_chance:
                 #print "damaged"
                 robot_health -= 50;
-        elif list(new_position) in pit_list:
-            additional_reward += reward_pit
-        elif cmp(new_position, goal):
-            additional_reward += reward_goal
-        
+        # elif cmp(list(new_position), goal):
+        #     additional_reward += reward_goal
+        #
+        # print additional_reward
+
         #print robot_health
         #Check if robot has been shot down. If so, terminal state equivalent to pit
         if robot_health <= 0:
@@ -518,19 +461,25 @@ def runQLearning(epsilonVal, alpha):
 
         # Put the update Q-Value to the Q-Values list
         #self.qValues.remove((state, action, qValue))
+        # print curr_position
+        # print action
+        # print new_qValue
+
+        # Update q-Value
         qValues[(tuple(curr_position),action)] = new_qValue
         curr_position = new_position
+        backup = curr_position
 
         # If reached an terminal position, return to start
         if list(curr_position) in pit_list:
-            curr_position = start
+            curr_position = tuple(start)
             robot_health = 100;
         elif cmp(list(curr_position), goal) == 0:
-            curr_position = start
+            curr_position = tuple(start)
             robot_health = 100;
         elif robot_health <= 0:
             robot_health = 100;
-            curr_position = start
+            curr_position = tuple(start)
 
 
     return qValues
