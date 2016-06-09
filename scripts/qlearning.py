@@ -419,6 +419,8 @@ def runQLearning(epsilonVal, alpha):
     reward_step = config['reward_for_each_step']
     reward_danger_zone = config['reward_for_danger_zone']
 
+    danger_zone_damage_chance = config['danger_zone_damage_chance']
+
     discount_factor = config['discount_factor']
 
     max_iterations = config['max_iterations']
@@ -487,13 +489,15 @@ def runQLearning(epsilonVal, alpha):
         elif list(new_position) in danger_zone_list:
             additional_reward += reward_danger_zone
             #print "in danger"
-            robot_health -= 50;
+            if random.random() < danger_zone_damage_chance:
+                #print "damaged"
+                robot_health -= 50;
         elif list(new_position) in pit_list:
             additional_reward += reward_pit
         elif cmp(new_position, goal):
             additional_reward += reward_goal
         
-        print robot_health
+        #print robot_health
         #Check if robot has been shot down. If so, terminal state equivalent to pit
         if robot_health <= 0:
             #print "robot shot down"

@@ -56,6 +56,7 @@ class RobotLogger():
         print "sim complete!", message.data
         if self.generate_video:
             image_util.generate_video(self.iteration_number)
+        '''
         if message.data:
             with open('path_list.json', 'w') as path:
                 #Saving the entire path to be confirmed
@@ -63,6 +64,6 @@ class RobotLogger():
             with open('policy_list.json', 'w') as policy:
                 #Saving only the last policy to be compared
                 json.dump(self.policy_list[-1], policy)
-
+        '''
 if __name__ == '__main__':
     rl = RobotLogger()

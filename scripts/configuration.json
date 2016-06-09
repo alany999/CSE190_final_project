@@ -30,6 +30,8 @@
   "reward_for_reaching_goal": 10.0,
   "reward_for_falling_in_pit": -10.0,
   "reward_for_danger_zone": -2.0,
+  
+  "danger_zone_damage_chance": 0.75,
 
   "discount_factor": 0.8,
 
