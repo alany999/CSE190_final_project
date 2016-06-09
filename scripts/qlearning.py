@@ -104,6 +104,24 @@ def getLocationAfterMove(curr_position, move):
 def getLocationAfterMoveWithProb(curr_position, move, p_forward, p_backward, p_left, p_right):
     rng = random.random()
 
+    #Random move
+    legalActions = []
+    new_position = curr_position[0]-1, curr_position[1]
+    if(ValidLocation(new_position)):
+        legalActions.append(new_position)
+    new_position = curr_position[0], curr_position[1]+1
+    if (ValidLocation(new_position)):
+        legalActions.append( new_position)
+    new_position = curr_position[0], curr_position[1]-1
+    if (ValidLocation(new_position)):
+        legalActions.append(new_position)
+    new_position = curr_position[0]+1, curr_position[1]
+    if (ValidLocation(new_position)):
+        legalActions.append( new_position)
+     # If random value between 0 and 1.0 is less than epsilon, return random action
+    if random.random() < epsilon and len(legalActions) > 0:
+        return random.choice(legalActions)
+
     # move up
     if (move == 0):
 
@@ -275,7 +293,7 @@ def computeValueFromQValues(curr_position):
         for action in legalActions:
             qValue = getQValue(curr_position, action)
             if qValue > max_value:
-                max_value = qValu_valuee
+                max_value = qValue
 
     # Return max Q-Value
     return max_value
@@ -390,6 +408,7 @@ def runQLearning(epsilonVal, alpha):
     width = config['map_size'][1]
     wall_list = config['walls']
     pit_list = config['pits']
+    danger_zone_list = config['danger_zone']
     goal = config['goal']
     start = config['start']
     move_list = config['move_list']
@@ -398,6 +417,7 @@ def runQLearning(epsilonVal, alpha):
     reward_pit = config['reward_for_falling_in_pit']
     reward_wall = config['reward_for_hitting_wall']
     reward_step = config['reward_for_each_step']
+    reward_danger_zone = config['reward_for_danger_zone']
 
     discount_factor = config['discount_factor']
 
@@ -423,6 +443,7 @@ def runQLearning(epsilonVal, alpha):
             curr_position = [row,col]
             for move in move_list:
                 key = (tuple(curr_position), move)
+                '''
                 if curr_position in pit_list:
                     print "pit"
                     qValues[key] = reward_pit
@@ -433,10 +454,19 @@ def runQLearning(epsilonVal, alpha):
                     print "wall"
                     qValues[key] = reward_wall
                 else:
-        		    qValues[key] = 0.0
-
+        	    qValues[key] = 0.0
+                '''
+                qValues[key] = 0.0
+                '''
+                #Incorrect implementation of danger_zone
+                elif curr_position in danger_zone_list:
+                    print "danger zone"
+                    qValues[key] = reward_danger_zone
+                '''
 
     curr_position = tuple(start)
+    
+    robot_health = 100;
 
     for iteration in range(0, max_iterations):
 
@@ -450,7 +480,27 @@ def runQLearning(epsilonVal, alpha):
         # update q-value
         # u_i = (reward_step + discount_factor * (max Q value from new position) )
         # Q_new(S,a) = (1-alpha)Q_old(s,a)+ alpha * temp
-        u_i = reward_step + discount_factor * (getMaxQValue((new_position)))
+       
+        additional_reward = 0.0
+        if list(new_position) in wall_list:
+            additional_reward += reward_wall
+        elif list(new_position) in danger_zone_list:
+            additional_reward += reward_danger_zone
+            #print "in danger"
+            robot_health -= 50;
+        elif list(new_position) in pit_list:
+            additional_reward += reward_pit
+        elif cmp(new_position, goal):
+            additional_reward += reward_goal
+        
+        print robot_health
+        #Check if robot has been shot down. If so, terminal state equivalent to pit
+        if robot_health <= 0:
+            #print "robot shot down"
+            additional_reward += reward_pit;
+
+
+        u_i = reward_step + additional_reward + discount_factor * (getMaxQValue((new_position)))
         new_qValue = (1-alpha) * getQValue(curr_position,action) + alpha * u_i
 
 
@@ -470,7 +520,12 @@ def runQLearning(epsilonVal, alpha):
         # If reached an terminal position, return to start
         if list(curr_position) in pit_list:
             curr_position = start
+            robot_health = 100;
         elif cmp(list(curr_position), goal) == 0:
+            curr_position = start
+            robot_health = 100;
+        elif robot_health <= 0:
+            robot_health = 100;
             curr_position = start
 
 

@@ -42,6 +42,7 @@ class Robot():
         print "Rows: " + str(rows)
         print "Cols: " + str(cols)
 
+        '''
 	self.path_pub = rospy.Publisher(
 		"/results/path_list",
 	        AStarPath,
@@ -54,6 +55,7 @@ class Robot():
                 queue_size = 10,
                 latch = True
         )
+        '''
 
         self.sim_complete = rospy.Publisher(
                 "/map_node/sim_complete",
@@ -78,14 +80,14 @@ class Robot():
         #sself.policy_pub.publish(mdp_policy)
 
         #Qlearning
-        epsilonVal = .2
-        iterations = 200
+        epsilonVal = 0.2
+        #iterations = 200
         alpha = 0.5
         qlearning_policy = runQLearning(epsilonVal, alpha);
         
         for row in range(0, rows):
             for col in range (0, cols):
-                for move in range (0, 3):
+                for move in range (0, 4):
                     tmp_position = (row, col)
                     qVal = qlearning_policy[(tuple(tmp_position), move)]
                     print "[(" + str(row) + "," + str(col) + "), " + str(move) + "]: " + str(qVal)
